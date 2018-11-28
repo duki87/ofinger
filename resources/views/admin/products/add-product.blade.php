@@ -52,16 +52,16 @@
             </div>
 
             <div class="form-group">
-              <label for="image" class="col-sm-2 control-label">Фотографија која репрезентује производ</label>
+              <label for="image" class="col-sm-2 control-label">Фотографијe производa</label>
               <div class="col-sm-10">
-                <input type="file" class="form-control isEmpty" name="featured_image" id="featured_image" value="">
+                <input type="file" multiple class="form-control isEmpty" name="images[]" id="images" value="">
                 <small class="text-danger errText hidden" id="image_err">Фотографија је обавезна!</small>
-                <small class="text-danger" id="error_featured_image"></small>
+                <small class="text-danger" id="error_images"></small>
               </div>
             </div>
 
             <div class="form-group">
-              <div class="col-sm-offset-2 col-sm-2" style="position:relative" id="image_preview">
+              <div class="col-sm-offset-2 col-sm-10" style="position:relative" id="images_preview">
 
               </div>
             </div>
@@ -89,12 +89,12 @@
             <div class="row" id="productAlternates">
 
               <div class="productAlt" id="" data-productAlt="1">
-                <h4 class="col-sm-12 text-info">Варијанта <span class="productAltNumText"> 1</span></h4>
+                <h4 class="col-sm-12 text-info">Варијанта <span class="productAltNumText"> 1<a href="#" class="btn btn-danger hidden btn-xs deleteProdAlt" data-deleteAlt="1"><i class="fa fa-minus" aria-hidden="true"></i></a></span></h4>
                 <div class="">
                   <label for="sku" class="col-sm-2 control-label">Универзални код</label>
                   <div class="col-sm-4">
                     <input type="text" class="form-control isEmpty sku" name="sku[]" id="" data-sku="1" placeholder="Универзални код">
-                    <small class="text-danger errText hidden" id="sku_err">Урл је обавезан!</small>
+                    <small class="text-danger errText hidden" id="sku_err">Kод је обавезан!</small>
                   </div>
                 </div>
 

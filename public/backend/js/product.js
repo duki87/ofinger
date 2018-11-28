@@ -170,44 +170,123 @@ $(document).ready(function() {
     }
   }
 
-  $(document).on('change', '#image', function(event) {
+  $(document).on('change', '#images', function(event) {
     event.preventDefault();
-    var property = document.getElementById('image').files[0];
-    var image_name = property.name;
-    var image_extension = image_name.split('.').pop().toLowerCase();
-    if(jQuery.inArray(image_extension, ["jpg","jpeg","png","gif"]) == -1) {
-      error_images += 'Дозвољени формати фотографија су: gif, jpg, jpeg, png!';
-      return false;
-    }
-    var image_size = property.size;
-    if(image_size > 5000000) {
-      error_images += 'Максимална величина фотографије је 5 MB!';
-      return false;
+    if($('.productImage').length > 0) {
+      var folder_name = $('#productImages').attr('data-folderName');
+      var next_img = parseInt($('.productImage').last().attr('id')) + 1;
+      add_more_images(folder_name, next_img);
     } else {
+      var error_images = '';
+      var property = $('#images')[0].files;
       var form_data = new FormData();
-      form_data.append('image', property);
-      $.ajaxSetup({
-         headers: {
-            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-         }
-     });
+      for(var i=0; i<property.length; i++) {
+        var name = document.getElementById('images').files[i].name;
+        var ext = name.split('.').pop().toLowerCase();
+        var allowed = ['gif', 'jpg', 'jpeg', 'png'];
+        if(jQuery.inArray(ext, allowed) == -1) {
+          error_images += 'Унели сте фајл који има недозвољену екстензију!';
+        }
+        var image_size = document.getElementById('images').files[i].size;
+        if(image_size > 5242880) {
+          error_images += 'Величина фотографија не сме бити већа од 5 MB!';
+        }
+        form_data.append('images[]', document.getElementById('images').files[i]);
+      }
+      if(error_images == '') {
+        var images = '';
+        $.ajaxSetup({
+           headers: {
+              'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+           }
+       });
+        $.ajax({
+          url: "preview-product-img",
+          type: "POST",
+          data: form_data,
+          dataType: 'json',
+          contentType: false,
+          cache: false,
+          processData: false,
+          beforeSend: function() {
+            $('#error_images').html('<span class="text-primary">Учитавање фотографија...</span>');
+          },
+          success: function(result) {
+            images += '<div class="" id="productImages" data-folderName="'+result.folder_name+'">';
+            for(let [index, image] of (result.images).entries()) {
+              let last = index+1;
+              images += '<div class="col-sm-2 productImage" style="position:relative" id="'+last+'">';
+              images += '<img src="'+result.path+image+'" class="form-control" style="width:100%; height:auto" alt="">';
+              images += '<button class="btn btn-danger btn-xs deleteImage" style="position:absolute;top:4px;right:20px" data-unlink="'+image+'">&times;</button>';
+              images += '</div>';
+            }
+            images += '</div>';
+            $('#images_preview').append(images);
+            $('#error_images').html('<span class="text-success">Фотографијe су учитане!</span>');
+            $('#images').val('');
+          }
+        });
+      } else {
+        $('#images').val('');
+        $('#error_images').html('<span class="text-danger">'+error_images+'</span>');
+        return false;
+      }
+    }
+  });
+
+  function add_more_images(folder, next) {
+    var img_data = new FormData();
+    img_data.append('folder_name', folder);
+    img_data.append('next_image', next);
+    var error_images = '';
+    var property = $('#images')[0].files;
+    for(var i=0; i<property.length; i++) {
+      var name = document.getElementById('images').files[i].name;
+      var ext = name.split('.').pop().toLowerCase();
+      var allowed = ['gif', 'jpg', 'jpeg', 'png'];
+      if(jQuery.inArray(ext, allowed) == -1) {
+        error_images += 'Унели сте фајл који има недозвољену екстензију!';
+      }
+      var image_size = document.getElementById('images').files[i].size;
+      if(image_size > 5242880) {
+        error_images += 'Величина фотографија не сме бити већа од 5 MB!';
+      }
+      img_data.append('images[]', document.getElementById('images').files[i]);
+    }
+    if(error_images == '') {
+        $.ajaxSetup({
+           headers: {
+              'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+           }
+       });
       $.ajax({
-         url: "preview-category-img",
+         url: "preview-product-img",
          type: "POST",
-         data: form_data,
-         dataType: 'json',
+         data: img_data,
          contentType: false,
          cache: false,
          processData: false,
          success: function(result) {
-           var remove = '<button class="btn btn-danger btn-xs remove_image" id="remove_image" data-path="'+ result.image_src+'" style="position:absolute; right:20px; top:6px">x</button>';
-           $('#image_preview').html('<img src="http://localhost/ofinger/public/images/categories/'+ result.image_src+'" class="" id="preview_image" alt="" style="position:relative;border:1px solid green; width:100%; height:auto">');
-           $('#image_preview').append(remove);
-           console.log(result.image_src);
+           var images = '';
+           var last = result.last;
+           for(let image of result.images) {
+             images += '<div class="col-sm-2 productImage" style="position:relative" id="'+last+'">';
+             images += '<img src="'+result.path+image+'" class="form-control" style="width:100%; height:auto" alt="">';
+             images += '<button class="btn btn-danger btn-xs deleteImage" style="position:absolute;top:4px;right:20px" data-unlink="'+image+'">&times;</button>';
+             images += '</div>';
+             last++;
+           }
+           $('#productImages').append(images);
+           $('#error_images').html('<span class="text-success">Додато је још фотографија!</span>');
+           $('#images').val('');
          }
        });
-    }
-  });
+     } else {
+       $('#images').val('');
+       $('#error_images').html('<span class="text-danger">'+error_images+'</span>');
+       return false;
+     }
+  }
 
   $(document).on('click', '.remove_image', function(event) {
     event.preventDefault();

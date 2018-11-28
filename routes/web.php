@@ -66,4 +66,6 @@ Route::prefix('admin')->group(function() {
   //products
   Route::get('/products', 'ProductController@index')->name('admin.products');
   Route::get('/add-product', 'ProductController@add_product')->name('admin.add-product');
+  Route::post('/create-product', 'ProductController@create_product')->name('admin.create-product');
+  Route::post('/preview-product-img', 'ProductController@preview_product_img')->name('admin.preview-product-img');
 });
