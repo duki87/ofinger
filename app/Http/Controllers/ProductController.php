@@ -40,7 +40,7 @@ class ProductController extends Controller
           }
         }
         $path = url('/').'/'.$dir.'/';
-        return response()->json(['folder_name'=>$folder_name, 'images'=>$imagesArr, 'path'=>$path, 'last'=>$count-1]);
+        return response()->json(['folder_name'=>$folder_name, 'images'=>$imagesArr, 'path'=>$path]);
       } else {
         $images = $request->file('images');
         $imagesArr = array();
@@ -64,7 +64,9 @@ class ProductController extends Controller
     }
 
     public function remove_img(Request $request) {
-      $file_path = public_path().'/images/brands/'.$request->path;
+      $image = $request->image;
+      $folder = $request->folder;
+      $file_path = public_path().'/images/products/'.$folder.'/'.$image;
       $unlink = unlink($file_path);
       if($unlink) {
         return response()->json(['message'=>'IMG_DELETE']);

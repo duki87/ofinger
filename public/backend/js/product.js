@@ -215,7 +215,7 @@ $(document).ready(function() {
             images += '<div class="" id="productImages" data-folderName="'+result.folder_name+'">';
             for(let [index, image] of (result.images).entries()) {
               let last = index+1;
-              images += '<div class="col-sm-2 productImage" style="position:relative" id="'+last+'">';
+              images += '<div class="col-sm-2 productImage" data-image="'+image+'" style="position:relative" id="'+last+'">';
               images += '<img src="'+result.path+image+'" class="form-control" style="width:100%; height:auto" alt="">';
               images += '<button class="btn btn-danger btn-xs deleteImage" style="position:absolute;top:4px;right:20px" data-unlink="'+image+'">&times;</button>';
               images += '</div>';
@@ -268,13 +268,12 @@ $(document).ready(function() {
          processData: false,
          success: function(result) {
            var images = '';
-           var last = result.last;
            for(let image of result.images) {
-             images += '<div class="col-sm-2 productImage" style="position:relative" id="'+last+'">';
+             images += '<div class="col-sm-2 productImage" data-image="'+image+'" style="position:relative" id="'+next+'">';
              images += '<img src="'+result.path+image+'" class="form-control" style="width:100%; height:auto" alt="">';
              images += '<button class="btn btn-danger btn-xs deleteImage" style="position:absolute;top:4px;right:20px" data-unlink="'+image+'">&times;</button>';
              images += '</div>';
-             last++;
+             next++;
            }
            $('#productImages').append(images);
            $('#error_images').html('<span class="text-success">Додато је још фотографија!</span>');
@@ -288,18 +287,20 @@ $(document).ready(function() {
      }
   }
 
-  $(document).on('click', '.remove_image', function(event) {
+  $(document).on('click', '.deleteImage', function(event) {
     event.preventDefault();
-    var path = $(this).attr('data-path');
+    var imageToDelete = $(this).attr('data-unlink');
+    var imageFolder = $(this).parent().parent().attr('data-folderName');
     var form_data = new FormData();
-    form_data.append('path', path);
+    form_data.append('image', imageToDelete);
+    form_data.append('folder', imageFolder);
     $.ajaxSetup({
        headers: {
           'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
        }
    });
     $.ajax({
-       url: "remove-category-img",
+       url: "remove-product-img",
        type: "POST",
        data: form_data,
        contentType: false,
@@ -307,8 +308,8 @@ $(document).ready(function() {
        processData: false,
        success: function(result) {
          console.log(result.message);
-         $('#image_preview').html('');
-         $('#image').val('');
+         $(".productImage[data-image='" + imageToDelete +"']").remove();
+         $('#error_images').html('<span class="text-danger">Фотографија је обрисана!</span>');
        }
      });
   });
