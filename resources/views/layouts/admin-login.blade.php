@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>ДМ Електро</title>
+    <title>Офингер</title>
     <link rel="icon" href="{{asset('backend/logo.jpg')}}" type="image/x-icon">
     <!-- Bootstrap Core CSS -->
     <link href="{{asset('backend/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Product;
+use App\ProductDetails;
 use Illuminate\Http\Request;
 use DataTables;
 use Session;
@@ -71,6 +72,45 @@ class ProductController extends Controller
       if($unlink) {
         return response()->json(['message'=>'IMG_DELETE']);
       }
+    }
+
+    public function remove_folder_img(Request $request) {
+      $folder = $request->folder;
+      if(File::deleteDirectory(public_path('images/products/'.$folder))) {
+        return response()->json(['success'=>'FOLDER_DELETE']);
+      }
+    }
+
+    public function create_product(Request $request) {
+      $product = new Product;
+      $product->category_id = $request->category_id;
+      $product->brand_id = 2;
+      $product->name = $request->name;
+      $product->price = $request->price;
+      $product->price_discount = $request->price_discount;
+      $product->description = $request->description;
+      $product->featured_image = $request->featured_image;
+      $product->images_folder = $request->folder_name;
+      $product->url = $request->url;
+      $product->active = $request->active;
+      //$product->save();
+      if($product->save()) {
+        $lastInsertedId = $product->id;
+        //$product_details = new ProductDetails;
+        $product_alts = json_decode($request->product_details, true);
+        foreach ($product_alts as $alt) {
+          //echo $value['sku'] . $value['color'] . $value['size'] . $value['stock'] . '<br>';
+          $product_details = new ProductDetails;
+          $product_details->product_id = $lastInsertedId;
+          $product_details->sku = $alt['sku'];
+          $product_details->color = $alt['color'];
+          $product_details->size = $alt['size'];
+          $product_details->stock = $alt['stock'];
+          $product_details->active = 1;
+          $product_details->save();
+        }
+      }
+      return response()->json(['success'=>'PRODUCT_ADD', 'name'=>$request->name]);
     }
 
 }

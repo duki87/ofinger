@@ -1,6 +1,7 @@
 $(document).ready(function() {
     var err = false;
     get_parent_categories();
+    get_brands();
 
   function get_parent_categories() {
     var get_parent_categories = true;
@@ -20,39 +21,53 @@ $(document).ready(function() {
      });
   }
 
-  $(document).on('change', '#parent_id', function(e) {
-    e.preventDefault();
-    var parent_id = $(this).val();
-    var form_data = new FormData();
-    form_data.append('parent_id', parent_id);
+  function get_brands() {
+    var get_parent_categories = true;
     $.ajaxSetup({
        headers: {
           'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
        }
    });
     $.ajax({
-       url: "get-child-categories",
-       type: "POST",
-       data: form_data,
+       url: "get-brands-list",
+       type: "GET",
+       data: get_parent_categories,
        dataType: 'json',
-       contentType: false,
-       cache: false,
-       processData: false,
        success: function(result) {
-         $('#child_id').append(result.categories);
+         $('#brand_id').append(result.brand_data);
        }
      });
-  });
+  }
 
-  $(document).on('change', '#isMain', function(e) {
-      e.preventDefault();
-      var checkVal = $(this).is(":checked");
-      if(checkVal === false) {
-        $('#mainCategory').removeClass('hidden');
-      } else {
-        $('#mainCategory').addClass('hidden');
-      }
-    });
+  $(document).on('change', '#parent_id', function(e) {
+    e.preventDefault();
+    var parent_id = $(this).val();
+    if(parent_id == '') {
+      var empty_parent_id = '<option value="">Изаберите подкатегорију (прво морате главу категорију)</option>';
+      $('#child_id').html(empty_parent_id);
+    } else {
+      var form_data = new FormData();
+      form_data.append('parent_id', parent_id);
+      $.ajaxSetup({
+         headers: {
+            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+         }
+     });
+      $.ajax({
+         url: "get-child-categories",
+         type: "POST",
+         data: form_data,
+         dataType: 'json',
+         contentType: false,
+         cache: false,
+         processData: false,
+         success: function(result) {
+           $('#child_id').html(result.categories);
+         }
+       });
+    }
+
+  });
 
   $(document).on('focus', '.errClass', function(e) {
     e.preventDefault();
@@ -134,7 +149,7 @@ $(document).ready(function() {
             '<div class="">'+
               '<label for="stock" class="col-sm-2 control-label">Количина у складишту</label>'+
               '<div class="col-sm-4">'+
-                '<input type="text" class="form-control isEmpty stock" name="stock[]" id="" data-stock="'+productAltNum+'" placeholder="Унесите број комада">'+
+                '<input type="text" class="form-control isEmpty stock" name="stock[]" id="" data-stock="'+productAltNum+'" placeholder="Унесите број комада" onkeypress="return AllowNumbersOnly(event)">'+
                 '<small class="text-danger errText hidden" id="stock_err">Ово поље је обавезно!</small>'+
               '</div>'+
             '</div>'+
@@ -212,6 +227,7 @@ $(document).ready(function() {
             $('#error_images').html('<span class="text-primary">Учитавање фотографија...</span>');
           },
           success: function(result) {
+            var remove_button = '<button type="button" class="btn btn-danger" id="removeImages" data-removeImages="'+result.folder_name+'">Обришите све фотографије</button>';
             images += '<div class="" id="productImages" data-folderName="'+result.folder_name+'">';
             for(let [index, image] of (result.images).entries()) {
               let last = index+1;
@@ -221,9 +237,11 @@ $(document).ready(function() {
               images += '</div>';
             }
             images += '</div>';
+            $('#images_folder').val(result.folder_name);
             $('#images_preview').append(images);
             $('#error_images').html('<span class="text-success">Фотографијe су учитане!</span>');
             $('#images').val('');
+            $('#images_preview').after('<div class="form-group" id="removeButtonDiv"><div class="col-sm-offset-2 col-sm-10">'+remove_button+'</div>');
           }
         });
       } else {
@@ -307,38 +325,92 @@ $(document).ready(function() {
        cache: false,
        processData: false,
        success: function(result) {
-         console.log(result.message);
          $(".productImage[data-image='" + imageToDelete +"']").remove();
+         if($('.productImage').length < 1) {
+           delete_folder($('#productImages').attr('data-folderName'));
+         }
+         console.log($('.productImage').length);
          $('#error_images').html('<span class="text-danger">Фотографија је обрисана!</span>');
        }
      });
   });
 
-  $(document).on('submit', '#add-product', function(e) {
-    e.preventDefault();
-
-    var name = $('#name').val();
-    var description = $('#description').val();
-    var image = $('#remove_image').attr('data-path');
-    var url = $('#url').val();
-    var isActive = $('#active').is(":checked");
-    var active = new Boolean();
-    if(isActive == true) {
-      active = 1;
+  $(document).on('click', '#removeImages', function(event) {
+    event.preventDefault();
+    if(confirm('Да ли сте сигурни да желите да обришете све фотографије које сте учитали?')) {
+      delete_folder($(this).attr('data-removeImages'));
     } else {
-      active = 0;
+      return false;
+    }
+  });
+
+  function delete_folder(folderName) {
+    var folder = folderName;
+    var folder_data = new FormData();
+    folder_data.append('folder', folder);
+     $.ajaxSetup({
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+       }
+     });
+     $.ajax({
+      url: "remove-folder-img",
+      type: "POST",
+      data: folder_data,
+      contentType: false,
+      cache: false,
+      processData: false,
+      success: function(result) {
+        if(result.success == 'FOLDER_DELETE') {
+          $('#images_preview').html('');
+          $('#removeButtonDiv').remove();
+          $('#error_images').html('<span class="text-danger">Све фотографије које сте унели су обрисане!</span>');
+        }
+      }
+    });
+  }
+
+  $(document).on('click', '.productImage', function(event) {
+    event.preventDefault();
+    // $('#productImages .productImage').removeClass('.featured-image');
+    if($(this).hasClass('featured-image')) {
+      $(this).removeClass('featured-image');
+      $('#error_featured_image').removeClass('hidden');
+      err = true;
+    } else {
+      if($('.featured-image').length >= 1) {
+        $('.productImage').removeClass('featured-image');
+        $(this).addClass('featured-image');
+        $('#featured_photo').val($(this).attr('data-image'));
+        $('#error_featured_image').addClass('hidden');
+        err = false;
+        if($('#error_featured_image').hasClass('hidden')) {
+          return false;
+        } else {
+          $('#error_featured_image').addClass('hidden');
+          err = false;
+        }
+      } else {
+        $(this).addClass('featured-image');
+        $('#featured_photo').val($(this).attr('data-image'));
+        $('#error_featured_image').addClass('hidden');
+        err = false;
+      }
+    }
+  });
+
+  $(document).on('submit', '#add-product', function(event) {
+    event.preventDefault();
+
+    if($('.featured-image').length < 1) {
+      $('#error_featured_image').removeClass('hidden');
+      err = true;
     }
 
-    var isMain = $('#isMain').is(":checked");
-    if(isMain === false) {
-      var parent_id = $('#parent_id').val();
-      if(parent_id == '') {
-        $('#parent_id').addClass('border-danger');
-        $('#parent_id').addClass('errClass');
-        $('#parent_id_err').removeClass('hidden');
-      }
+    if($('.productImage').length < 1) {
+      $('#image_err').removeClass('hidden');
     } else {
-      var parent_id = 0;
+      $('#image_err').addClass('hidden');
     }
 
     var fields = $('.isEmpty');
@@ -354,32 +426,74 @@ $(document).ready(function() {
 
     if(err) {
       return false;
-    } else {
+    }
+    else {
       $.ajaxSetup({
          headers: {
             'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
          }
      });
-     var category_data = new FormData();
-     category_data.append('name', name);
-     category_data.append('parent_id', parent_id);
-     category_data.append('description', description);
-     category_data.append('image', image);
-     category_data.append('url', url);
-     category_data.append('active', active);
+     var product_data = new FormData();
+     var category_id = $('#child_id').val();
+     var brand_id = $('#brand_id').val();
+     var name = $('#name').val();
+     var description = $('#description').val();
+     var price = $('#price').val();
+     var price_discount = $('#price_discount').val();
+     if(price_discount == '') {
+       price_discount = '0.0';
+     }
+     var featured_image = $('#featured_photo').val();
+     var folder_name = $('#productImages').attr('data-foldername');
+     var url = $('#url').val();
+     var isActive = $('#active').is(":checked");
+     var active = new Boolean();
+     if(isActive == true) {
+       active = 1;
+     } else {
+       active = 0;
+     }
+
+     var alts = {};
+     var sku = $('.sku');
+     var color = $('.color');
+     var size = $('.size');
+     var stock = $('.stock');
+
+     for(let i=0; i<sku.length; i++) {
+       alts[i] = {
+         sku: sku.eq(i).val(),
+         stock: stock.eq(i).val(),
+         color: color.eq(i).val(),
+         size: size.eq(i).val()
+       }
+     }
+     var product_details = JSON.stringify(alts);
+
+     product_data.append('name', name);
+     product_data.append('category_id', category_id);
+     product_data.append('brand_id', brand_id);
+     product_data.append('description', description);
+     product_data.append('price', price);
+     product_data.append('price_discount', price_discount);
+     product_data.append('featured_image', featured_image);
+     product_data.append('folder_name', folder_name);
+     product_data.append('url', url);
+     product_data.append('active', active);
+     product_data.append('product_details', product_details);
+     console.log(product_data);
       $.ajax({
-         url: "create-category",
+         url: "create-product",
          type: "POST",
-         data: category_data,
+         data: product_data,
          contentType: false,
          cache: false,
          processData: false,
          success: function(result) {
-           //console.log(result.success);
-           if(result.success == 'CATEGORY_ADD') {
-             $('#image_preview').html('');
-             document.getElementById("add-category").reset();
-             $('#category_message').html('<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Успешно сте додали категорију <strong>'+name+'.</strong></div>');
+           if(result.success == 'PRODUCT_ADD') {
+             $('#images_preview').html('');
+             document.getElementById("add-product").reset();
+             $('#product_message').html('<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Успешно сте додали производ <strong>'+name+'.</strong></div>');
            }
          }
        });

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
@@ -10,11 +11,11 @@ class Product extends Model
 
   protected $guard = 'admin';
 
-  public function images() {
-    return $this->hasMany('App\ProductImages', 'product_id');
+  public function details() {
+    return $this->hasMany('App\ProductDetails', 'product_id');
   }
 
   protected $fillable = [
-      'category_id', 'brand_id', 'name', 'price', 'description', 'featured_image', 'url', 'active'
+      'category_id', 'brand_id', 'name', 'price', 'price_discount', 'description', 'featured_image', 'images_folder', 'url', 'active'
   ];
 }

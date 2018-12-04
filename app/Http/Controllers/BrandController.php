@@ -123,5 +123,14 @@ class BrandController extends Controller
     Session::flash('brand_message', 'Произвођач '.$request->name.' је успешно измењен!');
     return response()->json(['public_path'=>$public_path]);
   }
+
+  public function get_all_brands() {
+    $brand_data = array();
+    $brands = Brand::get();
+    foreach ($brands as $brand) {
+      $brand_data[] = '<option value="'.$brand->id.'">'.$brand->name.'</option>';
+    }
+    return response()->json(['brand_data'=>$brand_data]);
+  }
 }
 ?>

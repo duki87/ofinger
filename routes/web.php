@@ -51,6 +51,7 @@ Route::prefix('admin')->group(function() {
 
   //brands
   Route::get('/brands', 'BrandController@index')->name('admin.brands');
+  Route::get('/get-brands-list', 'BrandController@get_all_brands')->name('admin.get-brands-list');
   Route::get('/add-brand', 'BrandController@add_brand')->name('admin.add-brand');
   Route::post('/preview-brand-img', 'BrandController@preview_brand_img')->name('admin.preview-brand-img');
   Route::post('/remove-brand-img', 'BrandController@remove_img')->name('admin.remove-brand-img');
@@ -69,4 +70,5 @@ Route::prefix('admin')->group(function() {
   Route::post('/create-product', 'ProductController@create_product')->name('admin.create-product');
   Route::post('/preview-product-img', 'ProductController@preview_product_img')->name('admin.preview-product-img');
   Route::post('/remove-product-img', 'ProductController@remove_img')->name('admin.remove-product-img');
+  Route::post('/remove-folder-img', 'ProductController@remove_folder_img')->name('admin.remove-folder-img');
 });
