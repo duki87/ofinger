@@ -100,7 +100,7 @@
 
               <label for="price_discount" class="col-sm-2 control-label">Цена на попусту</label>
               <div class="col-sm-4">
-                <input type="text" class="form-control" name="price_discount" id="price_discount" placeholder="Цена на попусту (није обавезно)">
+                <input type="text" class="form-control" name="price_discount" id="price_discount" placeholder="Цена на попусту (није обавезно)" onkeypress="return priceCheck(event)">
               </div>
             </div>
 
@@ -196,10 +196,17 @@
   }
 
   function priceCheck(e) {
-    //console.log(e);
-    var code = (e.key) ? e.key : e.key;
-    var rgx = /^[0-9]*\.?[0-9]*$/;
-    if(!code.match(rgx)) {
+    var key = e.key;
+    var id = e.originalTarget.attributes.id.value;
+    var allowed = ['0','1','2','3','4','5','6','7','8','9','.','Backspace'];
+    if(allowed.includes(key)) {
+      if(key == '.') {
+        let value = String($('#'+id).val());
+        if(value.indexOf('.') > -1) {
+          e.preventDefault();
+        }
+      }
+    } else {
       e.preventDefault();
     }
   }

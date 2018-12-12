@@ -71,4 +71,6 @@ Route::prefix('admin')->group(function() {
   Route::post('/preview-product-img', 'ProductController@preview_product_img')->name('admin.preview-product-img');
   Route::post('/remove-product-img', 'ProductController@remove_img')->name('admin.remove-product-img');
   Route::post('/remove-folder-img', 'ProductController@remove_folder_img')->name('admin.remove-folder-img');
+  Route::post('/get-products-table', 'ProductController@get_products_table')->name('admin.get-products-table');
+  Route::get('/edit-product/{url}', 'ProductController@edit_product')->name('admin.edit-product');
 });
