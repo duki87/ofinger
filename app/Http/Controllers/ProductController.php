@@ -122,7 +122,7 @@ class ProductController extends Controller
       ->editColumn('active', function(Product $product) {
           $id = $product->id;
           $url = $product->url;
-          return '<a href="'. route('admin.edit-product', ['url' => $url]) .'" name="edit" data-id="'.$id.'" class="btn btn-success edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> <a href="" name="delete-product" id="'.$id.'" data-id="'.$id.'" class="btn btn-danger delete-category"><i class="fa fa-trash" aria-hidden="true"></i></a>';
+          return '<a href="'. route('admin.edit-product', ['url' => $url]) .'" name="edit" data-id="'.$id.'" class="btn btn-success edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> <a href="" name="delete-product" id="'.$id.'" data-id="'.$id.'" class="btn btn-danger delete-product"><i class="fa fa-trash" aria-hidden="true"></i></a>';
         })
 
       ->editColumn('featured_image', function(Product $product) {
@@ -168,6 +168,16 @@ class ProductController extends Controller
     public function edit_product($url) {
       $category = Product::where(['url' => $url])->first();
       return view('admin.products.edit-product');
+    }
+
+    public function remove_product(Request $request) {
+      $product = Product::where(['id' => $request->id])->first();
+      $name = $product->name;
+      $images_folder = $product->images_folder;
+      File::deleteDirectory(public_path('images/products/'.$images_folder));
+      Product::where(['id' => $request->id])->delete();
+      ProductDetails::where(['product_id' => $request->id])->delete();
+      return response()->json(['name'=>$name, 'success'=>'PRODUCT_DELETE']);
     }
 
 }

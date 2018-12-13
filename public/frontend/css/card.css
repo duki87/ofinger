@@ -1,0 +1,19 @@
+.custom-card-btn {
+  background-color: orange;
+  border-radius: 5px;
+  color:white;
+  font-weight: bold;
+  border: 2px solid grey;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.custom-card-btn:hover {
+  background-color: grey;
+  border-radius: 5px;
+  color:white;
+  font-weight: bold;
+  border: 2px solid grey;
+  cursor: pointer;
+  padding: 5px;
+}

@@ -11,9 +11,13 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('index');
+// });
+
+Route::get('/', 'IndexController@index')->name('index');
+Route::get('/kategorije', 'IndexController@categories')->name('front.categories');
+Route::get('/kategorije/{url}', 'IndexController@category')->name('front.category');
 
 Auth::routes();
 
@@ -73,4 +77,5 @@ Route::prefix('admin')->group(function() {
   Route::post('/remove-folder-img', 'ProductController@remove_folder_img')->name('admin.remove-folder-img');
   Route::post('/get-products-table', 'ProductController@get_products_table')->name('admin.get-products-table');
   Route::get('/edit-product/{url}', 'ProductController@edit_product')->name('admin.edit-product');
+  Route::post('/remove-product', 'ProductController@remove_product')->name('admin.remove-product');
 });

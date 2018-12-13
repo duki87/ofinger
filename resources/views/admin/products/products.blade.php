@@ -60,7 +60,7 @@
 $(document).ready(function() {
   session_message();
   var get_data = true;
-  var categoriesDataTable = $('#productsTable').DataTable({
+  var productsDataTable = $('#productsTable').DataTable({
     "processing"  : true,
     "responsive": true,
     "serverSide"  : true,
@@ -90,28 +90,28 @@ $(document).ready(function() {
     "pageLength"  : 10
   });
 
-  $(document).on('click', '.delete-category', function(e) {
+  $(document).on('click', '.delete-product', function(e) {
     e.preventDefault();
-    var category_id = $(this).attr('data-id');
-    var delete_category = new FormData();
-    delete_category.append('id', category_id);
-    if(confirm('Да ли сте сигурни да желите да обришете ову категорију?')) {
+    var product_id = $(this).attr('data-id');
+    var delete_product = new FormData();
+    delete_product.append('id', product_id);
+    if(confirm('Да ли сте сигурни да желите да обришете овaј производ?')) {
       $.ajaxSetup({
          headers: {
             'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
          }
      });
       $.ajax({
-         url: "remove-category",
+         url: "remove-product",
          type: "POST",
-         data: delete_category,
+         data: delete_product,
          contentType: false,
          cache: false,
          processData: false,
          success: function(result) {
-           if(result.success == 'CATEGORY_DELETE') {
-             $('#category_message').html('<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Успешно сте обрисали категорију <strong>'+result.name+'.</strong></div>');
-             categoriesDataTable.ajax.reload();
+           if(result.success == 'PRODUCT_DELETE') {
+             $('#product_message').html('<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Успешно сте обрисали производ <strong>'+result.name+'.</strong></div>');
+             productsDataTable.ajax.reload();
            }
          }
        });
@@ -125,10 +125,10 @@ $(document).ready(function() {
     if(session_message == '' || session_message == null) {
       return false;
     } else {
-      $('#category_message').html('<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button> ' + session_message);
+      $('#product_message').html('<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button> ' + session_message);
     }
   }
 });
 </script>
-<script src="{{asset('backend/js/category.js')}}"></script>
+
 @endsection
