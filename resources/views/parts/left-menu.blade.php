@@ -1,35 +1,33 @@
+<?php
+  $brands = App\Http\Controllers\IndexController::brands_menu();
+  $categories = App\Http\Controllers\IndexController::categories_menu();
+?>
 <div id="accordion">
 
- <div class="card">
-   <div class="card-header">
-     <a class="card-link" data-toggle="collapse" href="#collapseOne">
+ <div class="accordion">
+   <div class="list-group">
+     <a class="list-group-item list-group-item-action acc-link-item" data-toggle="collapse" href="#brands">
        Произвођачи
      </a>
    </div>
-   <div id="collapseOne" class="collapse show" data-parent="#accordion">
-     <div class="card-body">
-       <ul class="list-group">
-         <?php $brands = App\Http\Controllers\IndexController::brands_menu();
-          foreach($brands as $brand) {
-         ?>
-         <li style="list-style-type:none; padding:5px;"><a href="#">{{ $brand->name }}</a></li>
-         <?php
-          }
-         ?>
-       </ul>
+   <div id="brands" class="collapse" data-parent="#accordion">
+     <div class="list-group">
+       @foreach($brands as $brand)
+       <a class="list-group-item list-group-item-action" href="{{route('front.brand', $brand->url)}}">{{ $brand->name }}</a>
+       @endforeach
      </div>
    </div>
  </div>
 
- <div class="card">
-   <div class="card-header">
-     <a class="collapsed card-link" data-toggle="collapse" href="#collapseTwo">
-       Collapsible Group Item #2
+ <div class="accordion">
+   <div class="list-group">
+     <a class="list-group-item list-group-item-action acc-link-item" data-toggle="collapse" href="#categories">
+       Категорије
      </a>
    </div>
-   <div id="collapseTwo" class="collapse" data-parent="#accordion">
-     <div class="card-body">
-       Lorem ipsum..
+   <div id="categories" class="collapse" data-parent="#accordion">
+     <div class="" id="catAccordion">
+       <?=$categories;?>
      </div>
    </div>
  </div>

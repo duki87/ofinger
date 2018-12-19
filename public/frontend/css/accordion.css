@@ -1,0 +1,53 @@
+#accordion .accordion {
+  /* background-color: rgba(255, 153, 0, 0.8); */
+}
+
+#accordion .card-link {
+  color:white;
+  font-weight: bold;
+}
+
+.custom-show {
+  background-color: rgba(255, 153, 0, 0.2) !important;
+}
+
+.acc-list-item {
+  width: 100%;
+  list-style-type:none;
+  padding:5px;
+}
+
+.acc-link-item {
+  width: 100%;
+  background-color: rgba(255, 153, 0, 0.8);
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.acc-link-item:focus {
+  width: 100%;
+  background-color: rgba(255, 153, 0, 0.8);
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.acc-link-item:hover {
+  background-color: rgba(255, 153, 0, 0.8);
+  font-weight: bold;
+  color:white;
+}
+
+.acc-parcat-link-item {
+  width: 100%;
+  background-color: rgba(255, 153, 0, 0.2);
+  font-weight: bold;
+  text-decoration: none;
+  padding-left: 12%;
+}
+
+.acc-subcat-link-item {
+  width: 100%;
+  font-weight: bold;
+  text-decoration: none;
+  padding-left: 15%;
+}

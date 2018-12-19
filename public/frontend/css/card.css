@@ -6,6 +6,7 @@
   border: 2px solid grey;
   cursor: pointer;
   padding: 5px;
+  text-decoration: none;
 }
 
 .custom-card-btn:hover {
@@ -16,4 +17,27 @@
   border: 2px solid grey;
   cursor: pointer;
   padding: 5px;
+  text-decoration: none;
+}
+
+.custom-card-btn2 {
+  background-color: skyblue;
+  border-radius: 5px;
+  color:white;
+  font-weight: bold;
+  border: 2px solid grey;
+  cursor: pointer;
+  padding: 5px;
+  text-decoration: none;
+}
+
+.custom-card-btn2:hover {
+  background-color: grey;
+  border-radius: 5px;
+  color:white;
+  font-weight: bold;
+  border: 2px solid grey;
+  cursor: pointer;
+  padding: 5px;
+  text-decoration: none;
 }

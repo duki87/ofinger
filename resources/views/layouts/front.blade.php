@@ -19,6 +19,8 @@
     <!-- Custom CSS -->
     <link href="{{asset('frontend/css/navbar.css')}}" rel="stylesheet">
     <link href="{{asset('frontend/css/card.css')}}" rel="stylesheet">
+    <link href="{{asset('frontend/css/accordion.css')}}" rel="stylesheet">
+    <link href="{{asset('frontend/css/slider.css')}}" rel="stylesheet">
 
     <!-- DataTables CSS -->
     <link href="{{asset('backend/datatables-plugins/dataTables.bootstrap.css')}}" rel="stylesheet">
@@ -94,10 +96,10 @@
 
   <div class="container mt-2">
     <div class="row" style="width:100%">
-      <div class="col-md-2" id="left-menu">
+      <div class="col-md-3" id="left-menu">
         @include('parts.left-menu')
       </div>
-      <div class="col-md-10" id="main-content">
+      <div class="col-md-9" id="main-content">
         @yield('content')
       </div>
     </div>

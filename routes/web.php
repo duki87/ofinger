@@ -18,6 +18,8 @@
 Route::get('/', 'IndexController@index')->name('index');
 Route::get('/kategorije', 'IndexController@categories')->name('front.categories');
 Route::get('/kategorije/{url}', 'IndexController@category')->name('front.category');
+Route::get('/brendovi/{url}', 'IndexController@brand')->name('front.brand');
+Route::get('/proizvodi/{url}', 'IndexController@product')->name('front.product');
 
 Auth::routes();
 
