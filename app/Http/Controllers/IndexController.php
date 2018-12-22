@@ -55,21 +55,33 @@ class IndexController extends Controller
     return view('front.brand');
   }
 
+  public function products() {
+    return view('front.products');
+  }
+
   public function product($url) {
     $photos = array();
-    $product = Product::where(['url' => $url])->first();
-    //$photos = File::get(url('/').'/images/products/'.$product->images_folder);
-    //$files = Storage::files(url('/').'/images/products/'.$product->images_folder);
+    $brand_data = array();
+    $cat_data = array();
+    $product = Product::where(['url' => $url])->with('details')->first();
     $files = array_diff(scandir(public_path('images/products/'.$product->images_folder)), array('..', '.'));
     foreach ($files as $file) {
       $photos[] = url('/').'/images/products/'.$product->images_folder.'/'.$file;
     }
     $brand = Brand::where(['id' => $product->brand_id])->first();
     $brand_name = $brand->name;
+    $brand_url = $brand->url;
     $brand_logo = url('/').'/images/brands/'.$brand->image;
+    $brand_data['brand_name'] = $brand_name;
+    $brand_data['brand_url'] = $brand_url;
+    $brand_data['brand_logo'] = $brand_logo;
     $category = Category::where(['id' => $product->category_id])->first();
     $cat_name = $category->name;
-    return view('front.product')->with(['product' => $product, 'photos' => $photos, 'brand_name' => $brand_name, 'cat_name' => $cat_name, 'brand_logo' => $brand_logo]);
+    $cat_url = $category->url;
+    $cat_data['cat_name'] = $cat_name;
+    $cat_data['cat_url'] = $cat_url;
+
+    return view('front.product')->with(['product' => $product, 'photos' => $photos, 'brand_data' => $brand_data, 'cat_data' => $cat_data]);
   }
 
   public static function categories_menu() {

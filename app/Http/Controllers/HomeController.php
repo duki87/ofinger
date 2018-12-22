@@ -5,6 +5,7 @@ use App\Product;
 use App\Category;
 use App\Brand;
 use App\ProductDetails;
+use Session;
 
 use Illuminate\Http\Request;
 
@@ -25,7 +26,14 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() {
-      return view('home');
+    public function user() {
+      return view('front.user');
+    }
+
+    public function login() {
+      if(Session::has('user_id')) {
+        return redirect()->route('user');
+      }
+      return view('auth.login');
     }
 }

@@ -20,11 +20,14 @@ Route::get('/kategorije', 'IndexController@categories')->name('front.categories'
 Route::get('/kategorije/{url}', 'IndexController@category')->name('front.category');
 Route::get('/brendovi/{url}', 'IndexController@brand')->name('front.brand');
 Route::get('/proizvodi/{url}', 'IndexController@product')->name('front.product');
+Route::get('/proizvodi', 'IndexController@products')->name('front.products');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/user', 'HomeController@user')->name('user');
+Route::get('/sign-in', 'HomeController@login')->name('login');
 Route::get('/users/logout', 'Auth\LoginController@userLogout')->name('user.logout');
+Route::post('/login', 'Auth\LoginController@login')->name('user.login');
 
 Route::prefix('admin')->group(function() {
   //auth

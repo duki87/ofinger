@@ -29,7 +29,7 @@
     <link href="{{asset('backend/datatables-responsive/dataTables.responsive.css')}}" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="{{asset('backend/font-awesome/css/font-awesome.min.css')}}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link href="{{asset('backend/css/custom.css')}}" rel="stylesheet">
     <script src="{{asset('backend/jquery/jquery.min.js')}}"></script>
 
@@ -78,17 +78,41 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav custom-navbar-nav mx-auto">
           <li class="custom-nav-item-active ml-2">
-            <a class="custom-nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            <a class="custom-nav-link" href="{{ route('index') }}">Почетна <span class="sr-only">(current)</span></a>
           </li>
           <li class="custom-nav-item ml-2">
-            <a class="custom-nav-link" href="#">Features</a>
+            <a class="custom-nav-link" href="{{ route('front.products') }}">Производи</a>
           </li>
           <li class="custom-nav-item ml-2">
-            <a class="custom-nav-link" href="#">Pricing</a>
+            <a class="custom-nav-link" href="#">Снижено</a>
           </li>
           <li class="custom-nav-item ml-2">
-            <a class="custom-nav-link" href="#">Disabled</a>
+            <a class="custom-nav-link" href="#">О нама</a>
           </li>
+        </ul>
+        <ul class="navbar-nav custom-navbar-nav ml-auto">
+          @if(Session::has('user_name'))
+          <li class="username-nav-item ml-2">
+            {{ Session::get('user_name') }}
+          </li>
+            @if(Session::has('user_cart'))
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-shopping-cart"></i>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="#">Погледај корпу</a>
+                <a class="dropdown-item" href="#">наплати</a>
+            </li>
+            @endif
+          <li class="custom-nav-item ml-2">
+            <a class="custom-nav-link" href="{{ route('user.logout') }}"><i class="fas fa-sign-in-alt"></i></a>
+          </li>
+          @else
+          <li class="custom-nav-item ml-2">
+            <a class="custom-nav-link" href="{{ route('login') }}">Пријави се <i class="fas fa-sign-in-alt"></i></a>
+          </li>
+          @endif
         </ul>
       </div>
     </nav>

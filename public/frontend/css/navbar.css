@@ -12,6 +12,12 @@
   font-weight: bold;
 }
 
+.username-nav-item {
+  padding: 8px;
+  color:white;
+  font-weight: bold;
+}
+
 .custom-nav-item:hover {
   background-color: rgba(0,0,0,0.5);
   padding: 8px;
