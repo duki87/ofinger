@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <!-- <meta name="_token" content="{{ csrf_token() }}"> -->
+    <meta name="_token" content="{{ csrf_token() }}">
 
     <title>Офингер | ДОБРОДОШЛИ</title>
     <link rel="icon" href="{{asset('backend/logo.jpg')}}" type="image/x-icon">
@@ -106,7 +106,7 @@
             </li>
             @endif
           <li class="custom-nav-item ml-2">
-            <a class="custom-nav-link" href="{{ route('user.logout') }}"><i class="fas fa-sign-in-alt"></i></a>
+            <a class="custom-nav-link" href="{{ route('user.logout') }}" title="Одјавите се"><i class="fas fa-sign-in-alt"></i></a>
           </li>
           @else
           <li class="custom-nav-item ml-2">

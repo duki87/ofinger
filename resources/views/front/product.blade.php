@@ -1,5 +1,7 @@
 @extends('layouts.front')
-
+<?php
+  $array = Session::get('cart');
+  print_r($array); ?>
 @section('content')
 <div class="col-md-12">
   <h3><img class="img-fluid" width="80" height="auto" src="{{ $brand_data['brand_logo'] }}" alt=""> <b>{{ $brand_data['brand_name'] }}</b> {{ $product->name }} </h3>
@@ -38,19 +40,25 @@
           </tr>
         </thead>
         <tbody>
-          @foreach($product->details as $detail)
-          <tr>
-            <td class="text-center align-middle">{{$detail->size}}</td>
-            <td class="text-center align-middle">{{$detail->color}}</td>
-            <td class="text-center align-middle order">
-              <button type="button" class="btn btn-danger btn-sm removeItem d-inline" name="button"><i class="fas fa-minus"></i></button>
-              <input type="text" min="1" name="" class="orderItems form-control d-inline" style="width:3em" value="" data-sku="{{$detail->id}}" onkeypress="return AllowNumbersOnly(event)">
-              <button type="button" class="btn btn-success btn-sm addItem d-inline" name="button"><i class="fas fa-plus"></i></button>
-            </td>
-            <td>
-              <button type="button" name="addToCart" class="addToCart btn btn-primary d-inline"><i class="fas fa-cart-plus"></i></button>
-            </td>
-          </tr>
+          @foreach($details as $key => $array)
+            <tr class="itemData" data-productId="{{ $product->id }}">
+              <td class="text-center align-middle">{{$key}}</td>
+              <td class="text-center align-middle">
+                <select class="sizes form-control mx-auto" name="sizes" style="width:8em">
+                  @foreach($array as $value)
+                    <option value="{{$value['id']}}">{{$value['color']}}</option>
+                  @endforeach
+                </select>
+              </td>
+              <td class="text-center align-middle order">
+                <button type="button" class="btn btn-danger btn-sm removeItem d-inline" name="button"><i class="fas fa-minus"></i></button>
+                <input type="text" min="1" name="" class="orderItems form-control d-inline" style="width:3em" value="" data-sku="" onkeypress="return AllowNumbersOnly(event)">
+                <button type="button" class="btn btn-success btn-sm addItem d-inline" name="button"><i class="fas fa-plus"></i></button>
+              </td>
+              <td>
+                <button type="button" name="addToCart" title="Додај у корпу" class="addToCart btn btn-primary d-inline"><i class="fas fa-cart-plus"></i></button>
+              </td>
+            </tr>
           @endforeach
         </tbody>
       </table>
@@ -58,41 +66,54 @@
   </div>
 
 <script type="text/javascript">
-  $(document).on('click', '.img-preview', function(e) {
-    var src = $(this).attr('src');
-    if($('.stroke').length >= 1) {
-      $('.stroke').removeClass('border border-primary');
-      $('.img-preview').removeClass('stroke');
-    }
-    $(this).addClass('stroke');
-    $(this).addClass('border border-primary');
-    $('#img-expand').attr('src', src);
-  });
+  $(document).ready(function() {
+    $(document).on('click', '.img-preview', function(e) {
+      var src = $(this).attr('src');
+      if($('.stroke').length >= 1) {
+        $('.stroke').removeClass('border border-primary');
+        $('.img-preview').removeClass('stroke');
+      }
+      $(this).addClass('stroke');
+      $(this).addClass('border border-primary');
+      $('#img-expand').attr('src', src);
+    });
 
-  function AllowNumbersOnly(e) {
-    var code = (e.which) ? e.which : e.keyCode;
-    if (code > 31 && (code < 48 || code > 57)) {
+    function AllowNumbersOnly(e) {
+      var code = (e.which) ? e.which : e.keyCode;
+      if (code > 31 && (code < 48 || code > 57)) {
+        e.preventDefault();
+      }
+    }
+
+    $(document).on('click', '.addItem', function(e) {
       e.preventDefault();
-    }
-  }
+      let quantity = $(this).closest('.order').find('.orderItems').val();
+      if(quantity == '') {
+        $(this).closest('.order').find('.orderItems').val(1);
+      } else {
+        $(this).closest('.order').find('.orderItems').val(parseInt(quantity)+1);
+      }
+    });
 
-  $(document).on('click', '.addItem', function(e) {
-    e.preventDefault();
-    let quantity = parseInt($(this).closest('.order').find('.orderItems').val());
-    $(this).closest('.order').find('.orderItems').val(quantity+1);
-  });
+    $(document).on('click', '.removeItem', function(e) {
+      e.preventDefault();
+      let quantity = $(this).closest('.order').find('.orderItems').val();
+      if(quantity == '') {
+        return false;
+      } else if(parseInt(quantity) == 1) {
+        $(this).closest('.order').find('.orderItems').val('');
+        return false;
+      } else {
+        $(this).closest('.order').find('.orderItems').val(parseInt(quantity)-1);
+      }
+    });
 
-  $(document).on('click', '.removeItem', function(e) {
-    e.preventDefault();
-    let quantity = $(this).closest('.order').find('.orderItems').val();
-    if(quantity == '') {
-      return false;
-    } else if(parseInt(quantity) == 1) {
-      $(this).closest('.order').find('.orderItems').val('');
-      return false;
-    } else {
-      $(this).closest('.order').find('.orderItems').val(parseInt(quantity)-1);
-    }
+    // $(document).on('click', '.addToCart', function(e) {
+    //   let sku_id = $(this).closest('.itemData').find('.sizes').val();
+    //   let sku_qty = $(this).closest('.itemData').find('.orderItems').val();
+    //   console.log(sku_id+'=>'+sku_qty);
+    // });
   });
 </script>
+<script type="text/javascript" src="{{asset('frontend/js/cart.js')}}"></script>
 @endsection

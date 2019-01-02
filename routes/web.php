@@ -21,6 +21,7 @@ Route::get('/kategorije/{url}', 'IndexController@category')->name('front.categor
 Route::get('/brendovi/{url}', 'IndexController@brand')->name('front.brand');
 Route::get('/proizvodi/{url}', 'IndexController@product')->name('front.product');
 Route::get('/proizvodi', 'IndexController@products')->name('front.products');
+Route::post('/proizvodi/add-to-cart', 'CartController@add_to_cart')->name('front.add-to-cart');
 
 Auth::routes();
 

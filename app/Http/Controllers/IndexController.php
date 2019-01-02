@@ -81,7 +81,14 @@ class IndexController extends Controller
     $cat_data['cat_name'] = $cat_name;
     $cat_data['cat_url'] = $cat_url;
 
-    return view('front.product')->with(['product' => $product, 'photos' => $photos, 'brand_data' => $brand_data, 'cat_data' => $cat_data]);
+    //test for details array
+    $detailsGroup = array();
+
+    foreach($product->details as $value) {
+      $detailsGroup[$value['size']][] = $value;
+    }
+
+    return view('front.product')->with(['product' => $product, 'photos' => $photos, 'brand_data' => $brand_data, 'cat_data' => $cat_data, 'details' => $detailsGroup]);
   }
 
   public static function categories_menu() {
