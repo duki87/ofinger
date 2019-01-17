@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Product;
+use App\Comments;
 use App\Category;
 use App\Brand;
 use App\ProductDetails;

@@ -22,11 +22,14 @@ Route::get('/brendovi/{url}', 'IndexController@brand')->name('front.brand');
 Route::get('/proizvodi/{url}', 'IndexController@product')->name('front.product');
 Route::get('/proizvodi', 'IndexController@products')->name('front.products');
 Route::post('/proizvodi/add-to-cart', 'CartController@add_to_cart')->name('front.add-to-cart');
+Route::post('/update-cart', 'CartController@update_cart')->name('front.update-cart');
+Route::post('/proizvodi/add-comment', 'CommentsController@add_comment')->name('front.add-comment');
+Route::get('/korpa', 'CartController@show_cart')->name('front.cart');
 
 Auth::routes();
 
 Route::get('/user', 'HomeController@user')->name('user');
-Route::get('/sign-in', 'HomeController@login')->name('login');
+Route::get('/sign-in', 'HomeController@login')->name('sign-in');
 Route::get('/users/logout', 'Auth\LoginController@userLogout')->name('user.logout');
 Route::post('/login', 'Auth\LoginController@login')->name('user.login');
 

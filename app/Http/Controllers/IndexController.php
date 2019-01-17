@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 use App\Product;
+use App\Comments;
 use App\Category;
 use App\Brand;
+use App\User;
 use App\ProductDetails;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
@@ -61,9 +63,11 @@ class IndexController extends Controller
 
   public function product($url) {
     $photos = array();
+    $comments = array();
+    $commentArr = array();
     $brand_data = array();
     $cat_data = array();
-    $product = Product::where(['url' => $url])->with('details')->first();
+    $product = Product::where(['url' => $url])->with('details')->with('comments')->first();
     $files = array_diff(scandir(public_path('images/products/'.$product->images_folder)), array('..', '.'));
     foreach ($files as $file) {
       $photos[] = url('/').'/images/products/'.$product->images_folder.'/'.$file;
@@ -88,7 +92,15 @@ class IndexController extends Controller
       $detailsGroup[$value['size']][] = $value;
     }
 
-    return view('front.product')->with(['product' => $product, 'photos' => $photos, 'brand_data' => $brand_data, 'cat_data' => $cat_data, 'details' => $detailsGroup]);
+    foreach($product->comments as $comment) {
+      $user = User::where(['id' => $comment['user_id']])->first();
+      $commentArr['user_id'] = $comment['user_id'];
+      $commentArr['user_name'] = $user->name;
+      $commentArr['comment'] = $comment['comment'];
+      $comments[] = $commentArr;
+    }
+
+    return view('front.product')->with(['product' => $product, 'photos' => $photos, 'brand_data' => $brand_data, 'cat_data' => $cat_data, 'details' => $detailsGroup, 'comments' => $comments]);
   }
 
   public static function categories_menu() {

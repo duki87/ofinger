@@ -15,6 +15,10 @@ class Product extends Model
     return $this->hasMany('App\ProductDetails', 'product_id');
   }
 
+  public function comments() {
+    return $this->hasMany('App\Comments', 'product_id');
+  }
+
   protected $fillable = [
       'category_id', 'brand_id', 'name', 'price', 'price_discount', 'description', 'featured_image', 'images_folder', 'url', 'active'
   ];

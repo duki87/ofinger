@@ -39,7 +39,7 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
+    
 </head>
 
 <body>
@@ -95,26 +95,26 @@
           <li class="username-nav-item ml-2">
             {{ Session::get('user_name') }}
           </li>
-            @if(Session::has('user_cart'))
-            <li class="nav-item dropdown">
+          @if(Session::has('cart'))
+            <li class="nav-item dropdown" id="cart_menu">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-shopping-cart"></i>
               </a>
               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">Погледај корпу</a>
-                <a class="dropdown-item" href="#">наплати</a>
+                <a class="dropdown-item" href="{{ route('front.cart') }}">Погледај корпу</a>
+                <a class="dropdown-item" href="#">Hаплати</a>
+              </div>
             </li>
-            @endif
+          @endif
           <li class="custom-nav-item ml-2">
             <a class="custom-nav-link" href="{{ route('user.logout') }}" title="Одјавите се"><i class="fas fa-sign-in-alt"></i></a>
           </li>
           @else
           <li class="custom-nav-item ml-2">
-            <a class="custom-nav-link" href="{{ route('login') }}">Пријави се <i class="fas fa-sign-in-alt"></i></a>
+            <a class="custom-nav-link" href="{{ route('sign-in') }}">Пријави се <i class="fas fa-sign-in-alt"></i></a>
           </li>
           @endif
         </ul>
-      </div>
     </nav>
   </header>
 

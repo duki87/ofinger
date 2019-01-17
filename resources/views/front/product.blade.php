@@ -26,6 +26,69 @@
 
     <div class="col-md-6">
       {{ $product->description }}
+      <!-- Button trigger modal --> <br>
+      <button type="button" class="btn btn-primary mt-2 d-inline" data-toggle="modal" data-target="#comments">
+        Погледај коментаре за овај производ
+      </button>
+      @if(Session::has('user_id'))
+      <button type="button" class="btn btn-info mt-2 d-inline" data-toggle="modal" data-target="#add_comment">
+        Додај Коментар за производ
+      </button>
+      @endif
+
+      <!-- comments Modal -->
+      <div class="modal fade" id="comments" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Коментари за производ {{$product->name}}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              @foreach($comments as $comment)
+              <div class="media mt-2">
+                <img class="mr-3" width="20%" src="{{asset('images/etc/user-image.png')}}" alt="Generic placeholder image">
+                <div class="media-body">
+                  <h5 class="mt-0">Корисник <b>{{$comment['user_name']}}</b></h5>
+                  {{$comment['comment']}}
+                </div>
+              </div>
+              @endforeach
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Затвори</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- add comment Modal -->
+      <div class="modal fade" id="add_comment" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <form class="" id="comment_form" method="post">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Додај коментар за производ {{$product->name}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="form-group">
+                  <textarea id="comment" name="comment" rows="8" cols="80" class="form-control"></textarea>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <input type="hidden" id="product_id_comment" name="product_id_comment" value="{{$product->id}}">
+                <button type="submit" class="btn btn-success">Додај коментар</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Затвори</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="col-md-12">
@@ -105,6 +168,37 @@
         return false;
       } else {
         $(this).closest('.order').find('.orderItems').val(parseInt(quantity)-1);
+      }
+    });
+
+    $(document).on('submit', '#comment_form', function(e) {
+      e.preventDefault();
+      let comment = $('#comment').val();
+      let product_id = $('#product_id_comment').val();
+      var comment_data = new FormData();
+      comment_data.append('product_id', product_id);
+      comment_data.append('comment', comment);
+      if(comment == '') {
+        $('#add_comment').modal('toggle');
+        return false;
+      } else {
+        $.ajaxSetup({
+           headers: {
+              'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+           }
+       });
+        $.ajax({
+           url: "add-comment",
+           type: "POST",
+           data: comment_data,
+           contentType: false,
+           cache: false,
+           processData: false,
+           success: function(result) {
+             console.log(result.success);
+             $('#add_comment').modal('toggle');
+           }
+         });
       }
     });
 

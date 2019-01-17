@@ -24,7 +24,10 @@ $(document).ready(function() {
        cache: false,
        processData: false,
        success: function(result) {
-         console.log(result.success);
+         if(result.cart_menu !== '') {
+           $('#cart_menu').html(result.cart_menu);
+           console.log()result.success;
+         }
          // if(result.success == 'BRAND_ADD') {
          //   $('#image_preview').html('');
          //   document.getElementById("add-brand").reset();
@@ -33,5 +36,4 @@ $(document).ready(function() {
        }
      });
   });
-
 });
